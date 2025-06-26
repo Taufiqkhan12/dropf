@@ -133,6 +133,7 @@
 // export default HeroSection;
 
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
   const [isInputVisible, setInputVisible] = useState(false);
@@ -170,9 +171,12 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
         ref={roomRef}
         className="room-btn flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-10 z-10"
       >
-        <button className="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-700 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer">
+        <Link
+          to="/share"
+          className="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-700 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
+        >
           Create Room
-        </button>
+        </Link>
 
         {!isInputVisible ? (
           <button
