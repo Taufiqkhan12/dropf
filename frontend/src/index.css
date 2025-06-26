@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@import "tailwindcss";
+
+/* 1. Cool Blue Glow */
+.text-gradient-blue {
+  @apply bg-gradient-to-r from-sky-400 to-blue-500 text-transparent bg-clip-text;
+}
+
+/* 2. Cyber Violet */
+.text-gradient-violet {
+  @apply bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text;
+}
+
+/* 3. Lime Mint */
+.text-gradient-mint {
+  @apply bg-gradient-to-r from-lime-400 to-emerald-400 text-transparent bg-clip-text;
+}
+
+/* 4. Sunset Pop */
+.text-gradient-sunset {
+  @apply bg-gradient-to-r from-pink-500 to-yellow-400 text-transparent bg-clip-text;
+}
+
+@keyframes ripple-light {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* .hero-section::before {
+  content: "";
+  position: absolute;
+  top: 20%;
+  left: 44%;
+  width: 160px;
+  height: 160px;
+  background: rgb(229, 231, 235, 30%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple-light 4s infinite ease-out;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.hero-section-animation::before {
+  content: "";
+  position: absolute;
+  top: 30%;
+  left: 45%;
+  width: 120px;
+  height: 120px;
+  background: rgb(229, 231, 235, 30%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple-light 5s infinite ease-out;
+  opacity: 0.15;
+  z-index: 0;
+} */
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 20%;
+  left: 44%;
+  width: 180px;
+  height: 180px;
+  background: rgba(229, 231, 235, 10%);
+  border-radius: 50%;
+  /* transform: translate(-50%, -50%); */
+  animation: ripple-light 6s infinite ease-out;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-section-animation::before {
+  content: "";
+  position: absolute;
+  top: 24%;
+  left: 45.4%;
+  width: 140px;
+  height: 140px;
+  background: rgba(229, 231, 235, 20%);
+  border-radius: 50%;
+  /* transform: translate(-50%, -50%); */
+  animation: ripple-light 6s infinite ease-out;
+  transition-delay: 1.4s;
+  z-index: 0;
+  pointer-events: none;
+}
