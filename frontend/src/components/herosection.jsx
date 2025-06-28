@@ -56,14 +56,12 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
         </Link>
 
         {!isInputVisible ? (
-          <Link to="/download">
-            <button
-              onClick={handleInputVisibility}
-              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
-            >
-              Join Room
-            </button>
-          </Link>
+          <button
+            onClick={handleInputVisibility}
+            className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
+          >
+            Join Room
+          </button>
         ) : (
           <input
             type="text"
