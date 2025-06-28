@@ -1,16 +1,33 @@
 import Header from "./components/Header";
-import HeroSection from "./components/Herosection";
+import HeroSection from "./components/herosection";
 import Footer from "./components/Footer";
 import ShareFile from "../pages/Sharepage";
 import Home from "../pages/Home";
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import ReceivedFile from "../pages/Receiverpage";
+import { Toaster } from "react-hot-toast";
+import { CircleCheck, CircleX } from "lucide-react";
 
 function App() {
   const [isGuideOpen, setGuideOpen] = useState(false);
   return (
     <>
+      <Toaster
+        toastOptions={{
+          className: "text-center",
+          style: {
+            background: "#faf7f0",
+            textAlign: "center",
+          },
+          success: {
+            icon: <CircleCheck className="text-darkgreen" />,
+          },
+          error: {
+            icon: <CircleX className="text-red-600" />,
+          },
+        }}
+      />
       <Routes>
         <Route
           path="/"

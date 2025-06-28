@@ -15,7 +15,6 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
     const joinId = Math.floor(1000 + Math.random() * 9000);
 
     socket.emit("create-room", { uid: joinId });
-
     navigate(`/share/${joinId}`);
   };
 
@@ -46,14 +45,13 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
       <div
         ref={roomRef}
         className="room-btn flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-10 z-10"
-        onClick={() => handleCreateRoom()}
       >
-        <Link
-          to="/share"
+        <div
+          onClick={handleCreateRoom}
           className="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-700 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
         >
           Create Room
-        </Link>
+        </div>
 
         {!isInputVisible ? (
           <button

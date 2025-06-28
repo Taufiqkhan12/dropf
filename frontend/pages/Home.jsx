@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../src/components/Header";
-import HeroSection from "../src/components/Herosection";
+import HeroSection from "../src/components/herosection";
 import Footer from "../src/components/Footer";
 import socket from "../src/socket";
 
