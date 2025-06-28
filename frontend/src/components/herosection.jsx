@@ -1,146 +1,22 @@
-// // import { useState, useRef, useEffect } from "react";
-
-// // const HeroSection = () => {
-// //   const [isInputVisible, setInputVisible] = useState(false);
-// //   const [isJoinRoomVisible, setJoinVisible] = useState(true);
-
-// //   const roomRef = useRef(null); // ref to input + buttons
-
-// //   function handleInputVisibility() {
-// //     setInputVisible((value) => !value);
-// //     setJoinVisible((value) => !value);
-// //   }
-
-// //   useEffect(() => {
-// //     const handleClickOutside = (e) => {
-// //       if (roomRef.current && !roomRef.current.contains(e.target)) {
-// //         setInputVisible(false);
-// //         setJoinVisible(true);
-// //       }
-// //     };
-
-// //     document.addEventListener("mousedown", handleClickOutside);
-// //     return () => document.removeEventListener("mousedown", handleClickOutside);
-// //   }, []);
-// //   return (
-// //     <>
-// //       <div className="hero-section relative bg-[#121212] h-[70vh] w-full flex flex-col items-center  pt-12 gap-4 overflow-hidden">
-// //         <h1 className="text-white text-5xl sm:text-6xl lg:text-7xl font-semibold text-center tracking-wide z-10">
-// //           Drop files.
-// //           <br />
-// //           Collaborate fast.
-// //         </h1>
-// //         <p className="text-[#6a6a6a] text-center text-lg tracking-wider z-10">
-// //           Create a room, upload anything,
-// //           <br /> and collaborate instantly — from anywhere.
-// //         </p>
-// //         <div className="room-btn flex items-center justify-center gap-6 mt-12">
-// //           <button className="px-8 py-3 bg-green-700 rounded-4xl text-white border-[1px] border-white cursor-pointer text-lg font-semibold tracking-wide">
-// //             Create Room
-// //           </button>
-// //           <button
-// //             className={
-// //               isJoinRoomVisible
-// //                 ? "px-8 py-3 rounded-4xl text-white border-[1px] font-semibold text-lg tracking-wide cursor-pointer"
-// //                 : "hidden px-8 py-3 rounded-4xl text-white border-[1px] font-semibold text-lg tracking-wide cursor-pointer"
-// //             }
-// //             onClick={() => handleInputVisibility()}
-// //           >
-// //             Join Room
-// //           </button>
-// //           <input
-// //             type="text"
-// //             name="room-code"
-// //             id=""
-// //             className={
-// //               isInputVisible
-// //                 ? " border-[1px] border-white px-10 py-4 rounded-full text-white"
-// //                 : "hidden border-[1px] border-white px-10 py-4 rounded-full text-white"
-// //             }
-// //             placeholder="Enter room code"
-// //           />
-// //         </div>
-// //       </div>
-// //       <div className="hero-section-animation"></div>
-// //     </>
-// //   );
-// // };
-
-// // export default HeroSection;
-
-// import { useState, useRef, useEffect } from "react";
-
-// const HeroSection = () => {
-//   const [isInputVisible, setInputVisible] = useState(false);
-//   const roomRef = useRef(null); // reference to the button/input group
-
-//   const handleInputVisibility = () => {
-//     setInputVisible(true);
-//   };
-
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (roomRef.current && !roomRef.current.contains(event.target)) {
-//         setInputVisible(false);
-//       }
-//     };
-
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => document.removeEventListener("mousedown", handleClickOutside);
-//   }, []);
-
-//   return (
-//     <div className="relative bg-[#121212] h-[66vh] w-full flex flex-col items-center pt-12 gap-4 overflow-hidden hero-section">
-//       <h1 className="text-white text-5xl sm:text-6xl lg:text-7xl font-semibold text-center tracking-wide z-10">
-//         Drop files.
-//         <br />
-//         Collaborate fast.
-//       </h1>
-//       <p className="text-[#6a6a6a] text-center text-lg tracking-wider z-10">
-//         Create a room, upload anything,
-//         <br /> and collaborate instantly — from anywhere.
-//       </p>
-
-//       <div
-//         ref={roomRef}
-//         className="room-btn flex items-center justify-center gap-6 mt-12 z-10"
-//       >
-//         <button className="px-8 py-3 bg-green-700 rounded-4xl text-white border border-white text-lg font-semibold tracking-wide cursor-pointer">
-//           Create Room
-//         </button>
-
-//         {!isInputVisible ? (
-//           <button
-//             onClick={handleInputVisibility}
-//             className="px-8 py-3 rounded-4xl text-white border border-white text-lg font-semibold tracking-wide cursor-pointer"
-//           >
-//             Join Room
-//           </button>
-//         ) : (
-//           <input
-//             type="text"
-//             placeholder="Enter room code"
-//             className="border border-white px-8 py-3 rounded-full text-white bg-transparent"
-//           />
-//         )}
-//       </div>
-
-//       <div className="hero-section-animation"></div>
-//     </div>
-//   );
-// };
-
-// export default HeroSection;
-
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import socket from "../socket";
 
 const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
   const [isInputVisible, setInputVisible] = useState(false);
   const roomRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleInputVisibility = () => {
     setInputVisible(true);
+  };
+
+  const handleCreateRoom = () => {
+    const joinId = Math.floor(1000 + Math.random() * 9000);
+
+    socket.emit("create-room", { uid: joinId });
+
+    navigate(`/share/${joinId}`);
   };
 
   useEffect(() => {
@@ -170,6 +46,7 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
       <div
         ref={roomRef}
         className="room-btn flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-10 z-10"
+        onClick={() => handleCreateRoom()}
       >
         <Link
           to="/share"
@@ -179,12 +56,14 @@ const HeroSection = ({ isGuideOpen, setGuideOpen }) => {
         </Link>
 
         {!isInputVisible ? (
-          <button
-            onClick={handleInputVisibility}
-            className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
-          >
-            Join Room
-          </button>
+          <Link to="/download">
+            <button
+              onClick={handleInputVisibility}
+              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-3xl text-white border border-white text-base sm:text-lg font-semibold tracking-wide cursor-pointer"
+            >
+              Join Room
+            </button>
+          </Link>
         ) : (
           <input
             type="text"

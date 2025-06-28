@@ -1,14 +1,19 @@
 import Header from "../src/components/Header";
 import image from "../images/image.png";
 import Footer from "../src/components/Footer";
+import { useParams } from "react-router-dom";
+import QRCode from "react-qr-code";
+
 const ShareFile = ({ isGuideOpen, setGuideOpen }) => {
+  const { roomid } = useParams();
+
   return (
     <>
       <div className="relative bg-[#121212] min-h-[80vh] w-full flex flex-col items-center justify-center gap-6 sm:gap-8 px-4 sm:px-8 text-center overflow-hidden ">
         {/* HEADING */}
         <div className="room-code text-white">
           <p className="text-lg font-medium leading-[7px]">Room Code</p>
-          <h2 className="text-5xl font-medium">4983</h2>
+          <h2 className="text-5xl font-medium">{roomid}</h2>
         </div>
 
         {/* FILE DROP BOX */}
@@ -42,7 +47,12 @@ const ShareFile = ({ isGuideOpen, setGuideOpen }) => {
             width: "100%",
           }}
         >
-          <img src={image} alt="" />
+          <QRCode
+            value={`https://t57b483m-5173.inc1.devtunnels.ms/share/${roomid}`}
+            size={84}
+            bgColor="#fff"
+            fgColor="#6a6a6a"
+          />
         </div>
         <p className="mt-5 text-center max-w-sm mx-auto text-neutral-600">
           Scan this QR code to receive the file on another device or join using
