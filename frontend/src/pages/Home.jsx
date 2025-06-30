@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../src/components/Header";
-import HeroSection from "../src/components/herosection";
-import Footer from "../src/components/Footer";
-import socket from "../src/socket";
+import Header from "../components/Header";
+import HeroSection from "../components/Herosection";
+import Footer from "../components/Footer";
+import socket from "../socket";
 
 const Home = ({ setGuideOpen, isGuideOpen }) => {
   socket.on("connection", () => {

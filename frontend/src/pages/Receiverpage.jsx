@@ -1,12 +1,6 @@
 import { ArrowCircleDownIcon } from "@phosphor-icons/react";
 
-const ReceivedFile = () => {
-  const fileName = "JJJJJ";
-  const fileSize = 10000;
-  const onDownload = () => {
-    console.log("Hello World");
-  };
-
+const ReceivedFile = ({ fileName, fileSize, onDownload }) => {
   return (
     <div className="bg-[#1E1E1E] border border-zinc-700 text-white rounded-lg p-4 flex items-center justify-between w-full max-w-md shadow-md">
       <div className="flex items-center gap-4">

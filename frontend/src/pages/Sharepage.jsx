@@ -1,11 +1,11 @@
-import Header from "../src/components/Header";
-import Footer from "../src/components/Footer";
+import Footer from "../components/Footer";
 import { useParams } from "react-router-dom";
-import QRCode from "react-qr-code";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { X } from "lucide-react";
+import socket from "../socket";
+import QRCode from "react-qr-code";
 
 // Dropzone Component
 const Dropzone = ({ files, setFiles, label, MAX_FILES }) => {
@@ -69,7 +69,7 @@ const Dropzone = ({ files, setFiles, label, MAX_FILES }) => {
           Drag and drop files here, or click to select
         </p>
 
-        {files.length > 0 && (
+        {files?.length > 0 && (
           <div className="flex flex-wrap mt-10 gap-4 justify-center">
             {files.map(({ file, preview }, index) => (
               <div
@@ -109,6 +109,36 @@ const ShareFile = ({ isGuideOpen, setGuideOpen }) => {
   const { roomid } = useParams();
   const [files, setFiles] = useState([]);
 
+  const handleSendFiles = async () => {
+    if (!files?.length) return toast.error("No file selected");
+
+    const file = files[0].file;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const fileData = {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        content: reader.result, // base64 string
+      };
+
+      socket.emit("send-files", {
+        roomId: roomid,
+        file: fileData,
+      });
+
+      toast.success("File sent!");
+    };
+
+    reader.onerror = () => {
+      toast.error("Failed to read file.");
+    };
+
+    reader.readAsDataURL(file); // base64 encoding
+  };
+
   return (
     <>
       <div className="relative bg-[#121212] min-h-[80vh] w-full flex flex-col items-center justify-center gap-6 sm:gap-8 px-4 sm:px-8 text-center overflow-hidden">
@@ -122,12 +152,15 @@ const ShareFile = ({ isGuideOpen, setGuideOpen }) => {
             files={files}
             setFiles={setFiles}
             label="Choose a file to send"
-            MAX_FILES={3}
+            MAX_FILES={1}
           />
         </div>
 
         <div className="w-7/12 send-btn flex justify-end">
-          <button className="px-10 py-4 text-white bg-green-700 border-2 rounded-full">
+          <button
+            className="px-10 py-4 text-white bg-green-700 border-2 rounded-full"
+            onClick={() => handleSendFiles()}
+          >
             Send File
           </button>
         </div>

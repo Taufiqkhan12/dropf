@@ -28,11 +28,42 @@ io.on("connection", (socket) => {
   socket.on("create-room", async (data) => {
     const { uid } = data;
 
-    const createdRoom = await room.create({ roomId: uid });
+    await room.create({ roomId: uid });
 
     socket.join(uid.toString());
-    socket.emit("room-created", { uid });
-    console.log(createdRoom);
+  });
+
+  socket.on("send-files", async ({ roomId, file }) => {
+    const data = {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      content: file.content,
+    };
+
+    const created = await room.findOneAndUpdate(
+      { roomId },
+      {
+        fileName: data.name,
+        fileType: data.type,
+        fileSize: data.size,
+        fileBuffer: data.content,
+      }
+    );
+  });
+
+  socket.on("join-room", async (roomId) => {
+    try {
+      socket.join(roomId);
+
+      const data = await room.findOne({ roomId }); // assuming Mongoose schema
+
+      // Send room data back only to others in the room
+      socket.to(roomId).emit("room-joined", { data });
+    } catch (error) {
+      console.error("Error joining room:", error);
+      socket.emit("join-error", { message: "Failed to join room." });
+    }
   });
 });
 
