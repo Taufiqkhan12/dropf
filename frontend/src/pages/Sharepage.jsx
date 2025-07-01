@@ -16,7 +16,7 @@ const SharePage = () => {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    setRoomLink(`https://airbin.vercel.app/${roomId}`);
+    setRoomLink(`https://dropf.vercel.app/${roomId}`);
 
     socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
@@ -294,7 +294,7 @@ const SharePage = () => {
                   value={roomLink}
                   size={84}
                   bgColor="#fff"
-                  fgColor="#6a6a6a"
+                  fgColor="#121212"
                 />
               </div>
               <p className="mt-5 text-center max-w-sm mx-auto text-gray-400">
