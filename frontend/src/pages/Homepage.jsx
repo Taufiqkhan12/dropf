@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import JoinRoomButton from "../components/JoinRoomButton";
+import JoinRoomButton from "../components/Joinroombutton";
 import Footer from "../components/Footer";
 
 const HomePage = () => {
