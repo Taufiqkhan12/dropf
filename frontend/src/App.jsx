@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/Homepage";
 import SharePage from "./pages/Sharepage";
-import Header from "./components/Header";
+import Header from "../src/components/Header";
 
 export default function App() {
   return (
