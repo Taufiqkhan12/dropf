@@ -62,6 +62,14 @@
   z-index: 0;
 } */
 
+@media (max-width: 640px) {
+  .hero-section::before,
+  .hero-section-animation::before,
+  .hero-section-animation-2::before {
+    display: none;
+  }
+}
+
 .hero-section::before {
   content: "";
   position: absolute;

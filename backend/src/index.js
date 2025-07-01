@@ -29,30 +29,33 @@ app.use(express.static("public"));
 io.on("connection", (socket) => {
   console.log("New connection", socket.id);
 
+  // Handle sender joining a room (creating a room)
   socket.on("sender-join", (data) => {
     const { uid } = data;
 
-<<<<<<< HEAD
+    // If the room doesn't exist, create a new one
     if (!rooms[uid]) {
-      rooms[uid] = { users: [socket.id], timeout: null, fileSize: 0 };
-
+      rooms[uid] = { users: [socket.id], timeout: null, fileSize: 0 }; // Add fileSize to track total file size
+      // Set a timeout to close the room after 10 minutes
       rooms[uid].timeout = setTimeout(() => {
         io.to(uid).emit("room-closed");
-        delete rooms[uid];
+        delete rooms[uid]; // Cleanup room data after timeout
         console.log("Room", uid, "has been closed due to inactivity.");
-      }, 10 * 60 * 1000);
+      }, 10 * 60 * 1000); // 10 minutes
     } else {
-      rooms[uid].users.push(socket.id);
+      rooms[uid].users.push(socket.id); // Add user to existing room
     }
 
-    socket.join(uid);
+    socket.join(uid); // Join the room
     console.log(`User joined room: ${uid}`);
   });
 
+  // Handle joining an existing room (receiver joining)
   socket.on("join-room", (data) => {
     const { uid } = data;
-    socket.join(uid);
+    socket.join(uid); // Join the room
 
+    // If room doesn't exist, emit a room-not-found message
     if (!rooms[uid]) {
       socket.emit("room-not-found", "Room does not exist or has expired.");
       console.log("Room not found:", uid);
@@ -62,35 +65,42 @@ io.on("connection", (socket) => {
     console.log("User joined room:", uid);
   });
 
+  // Handle file metadata (file name, mime type, total size)
   socket.on("file-meta", (data) => {
     const { uid, metadata } = data;
-    socket.to(uid).emit("fs-meta", metadata);
+    socket.to(uid).emit("fs-meta", metadata); // Send metadata to receiver
   });
 
+  // Handle file chunks (sending raw file data)
   socket.on("file-raw", (data) => {
     const { uid, buffer } = data;
     const room = rooms[uid];
 
     if (!room) {
+      // If room does not exist, reject the chunk
       socket.emit("room-not-found", "Room does not exist.");
       return;
     }
 
+    // Check the total file size being uploaded
     room.fileSize += buffer.byteLength;
 
     if (room.fileSize > MAX_FILE_SIZE) {
+      // If the file exceeds the maximum size, reject the upload
       socket.emit(
         "file-too-large",
         `The file exceeds the maximum allowed size of 500MB.`
       );
-
+      // Optionally, disconnect the sender or take other actions
       socket.disconnect();
       return;
     }
 
-    socket.to(uid).emit("fs-share", buffer);
+    // If the file size is within limit, continue sending chunks
+    socket.to(uid).emit("fs-share", buffer); // Send file chunk to receiver
   });
 
+  // Handle user disconnection (optional cleanup)
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
 
@@ -99,46 +109,9 @@ io.on("connection", (socket) => {
       const room = rooms[roomId];
       room.users = room.users.filter((user) => user !== socket.id);
       if (room.users.length === 0) {
-        clearTimeout(room.timeout);
-        delete rooms[roomId];
+        clearTimeout(room.timeout); // Clear timeout if room becomes empty
+        delete rooms[roomId]; // Remove room data if no users are left
       }
-=======
-    await room.create({ roomId: uid });
-
-    socket.join(uid.toString());
-  });
-
-  socket.on("send-files", async ({ roomId, file }) => {
-    const data = {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      content: file.content,
-    };
-
-    const created = await room.findOneAndUpdate(
-      { roomId },
-      {
-        fileName: data.name,
-        fileType: data.type,
-        fileSize: data.size,
-        fileBuffer: data.content,
-      }
-    );
-  });
-
-  socket.on("join-room", async (roomId) => {
-    try {
-      socket.join(roomId);
-
-      const data = await room.findOne({ roomId }); // assuming Mongoose schema
-
-      // Send room data back only to others in the room
-      socket.to(roomId).emit("room-joined", { data });
-    } catch (error) {
-      console.error("Error joining room:", error);
-      socket.emit("join-error", { message: "Failed to join room." });
->>>>>>> 692023198cf15814e6780b44b4e984ccad1b3646
     }
   });
 });

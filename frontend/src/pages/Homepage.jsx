@@ -25,7 +25,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="hero-section flex flex-col min-h-screen bg-[#121212] text-center">
+    <div className="hero-section flex flex-col min-h-screen w-full bg-[#121212] text-center">
       <main className=" flex-grow flex flex-col items-center pt-12 gap-6 sm:gap-8 px-4 sm:px-8">
         <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-wide z-10 leading-tight">
           Drop files.
