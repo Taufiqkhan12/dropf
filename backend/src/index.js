@@ -1,41 +1,112 @@
 import express from "express";
 import http from "http";
-import cors from "cors";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
-import connectDB from "./db/db.connection.js";
-import { room } from "./model/room.model.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
 const server = http.createServer(app);
 
+// Increase the payload size limits for both Express and Socket.IO
+const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB in bytes
+
+// Increase HTTP payload size limit for Express
+app.use(express.json({ limit: MAX_FILE_SIZE })); // Allow larger JSON payloads
+
+// Socket.IO settings to handle larger payloads
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-  },
+  cors: { origin: process.env.CLIENT_URL },
+  maxHttpBufferSize: MAX_FILE_SIZE, // Max buffer size for Socket.IO messages
 });
 
+let rooms = {}; // Store rooms and their timeout state
+
+// Serve static files (for frontend)
 app.use(express.static("public"));
 
-await connectDB();
-
+// Socket events
 io.on("connection", (socket) => {
-  console.log(socket.id);
+  console.log("New connection", socket.id);
 
-  socket.on("create-room", async (data) => {
+  socket.on("sender-join", (data) => {
     const { uid } = data;
 
-    const createdRoom = await room.create({ roomId: uid });
+    if (!rooms[uid]) {
+      rooms[uid] = { users: [socket.id], timeout: null, fileSize: 0 };
 
-    socket.join(uid.toString());
-    socket.emit("room-created", { uid });
-    console.log(createdRoom);
+      rooms[uid].timeout = setTimeout(() => {
+        io.to(uid).emit("room-closed");
+        delete rooms[uid];
+        console.log("Room", uid, "has been closed due to inactivity.");
+      }, 10 * 60 * 1000);
+    } else {
+      rooms[uid].users.push(socket.id);
+    }
+
+    socket.join(uid);
+    console.log(`User joined room: ${uid}`);
+  });
+
+  socket.on("join-room", (data) => {
+    const { uid } = data;
+    socket.join(uid);
+
+    if (!rooms[uid]) {
+      socket.emit("room-not-found", "Room does not exist or has expired.");
+      console.log("Room not found:", uid);
+      return;
+    }
+
+    console.log("User joined room:", uid);
+  });
+
+  socket.on("file-meta", (data) => {
+    const { uid, metadata } = data;
+    socket.to(uid).emit("fs-meta", metadata);
+  });
+
+  socket.on("file-raw", (data) => {
+    const { uid, buffer } = data;
+    const room = rooms[uid];
+
+    if (!room) {
+      socket.emit("room-not-found", "Room does not exist.");
+      return;
+    }
+
+    room.fileSize += buffer.byteLength;
+
+    if (room.fileSize > MAX_FILE_SIZE) {
+      socket.emit(
+        "file-too-large",
+        `The file exceeds the maximum allowed size of 500MB.`
+      );
+
+      socket.disconnect();
+      return;
+    }
+
+    socket.to(uid).emit("fs-share", buffer);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+
+    // Clean up user from rooms
+    for (let roomId in rooms) {
+      const room = rooms[roomId];
+      room.users = room.users.filter((user) => user !== socket.id);
+      if (room.users.length === 0) {
+        clearTimeout(room.timeout);
+        delete rooms[roomId];
+      }
+    }
   });
 });
 
-server.listen(process.env.PORT, () => {
-  console.log(`Connected to port ${process.env.PORT}`);
+// Start the server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log("Server is listening on port", PORT);
 });

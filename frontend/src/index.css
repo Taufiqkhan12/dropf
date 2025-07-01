@@ -65,14 +65,14 @@
 .hero-section::before {
   content: "";
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 44%;
   width: 180px;
   height: 180px;
   background: rgba(229, 231, 235, 10%);
   border-radius: 50%;
   /* transform: translate(-50%, -50%); */
-  animation: ripple-light 6s infinite ease-out;
+  animation: ripple-light 5s infinite ease-out;
   z-index: 0;
   pointer-events: none;
 }
@@ -80,15 +80,31 @@
 .hero-section-animation::before {
   content: "";
   position: absolute;
-  top: 24%;
+  top: 33%;
   left: 45.4%;
   width: 140px;
   height: 140px;
   background: rgba(229, 231, 235, 20%);
   border-radius: 50%;
   /* transform: translate(-50%, -50%); */
-  animation: ripple-light 6s infinite ease-out;
+  animation: ripple-light 5s infinite ease-out;
   transition-delay: 1.4s;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-section-animation-2::before {
+  content: "";
+  position: absolute;
+  top: 35.7%;
+  left: 46.7%;
+  width: 100px;
+  height: 100px;
+  background: rgba(229, 231, 235, 20%);
+  border-radius: 50%;
+  /* transform: translate(-50%, -50%); */
+  animation: ripple-light 5s infinite ease-out;
+  transition-delay: 2s;
   z-index: 0;
   pointer-events: none;
 }

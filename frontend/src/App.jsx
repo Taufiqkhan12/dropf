@@ -1,42 +1,18 @@
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import SharePage from "./pages/SharePage";
 import Header from "./components/Header";
-import HeroSection from "./components/Herosection";
-import Footer from "./components/Footer";
-import ShareFile from "../pages/Sharepage";
-import Home from "../pages/Home";
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import ReceivedFile from "../pages/Receiverpage";
 
-function App() {
-  const [isGuideOpen, setGuideOpen] = useState(false);
+export default function App() {
   return (
     <>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home isGuideOpen={isGuideOpen} setGuideOpen={setGuideOpen} />
-          }
-        />
-        <Route
-          path="/share/:roomid"
-          element={
-            <>
-              <Header isGuideOpen={isGuideOpen} setGuideOpen={setGuideOpen} />
-              <ShareFile
-                isGuideOpen={isGuideOpen}
-                setGuideOpen={setGuideOpen}
-              />
-            </>
-          }
-        />
-        <Route path="/download" element={<ReceivedFile />} />
-      </Routes>
-      {/* <HeroSection isGuideOpen={isGuideOpen} setGuideOpen={setGuideOpen} /> */}
-      {/* <ShareFile isGuideOpen={isGuideOpen} setGuideOpen={setGuideOpen} /> */}
-      {/* <Footer /> */}
+      <Header />
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/:roomId" element={<SharePage />} />
+        </Routes>
+      </main>
     </>
   );
 }
-
-export default App;
