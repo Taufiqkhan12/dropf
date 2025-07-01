@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import JoinRoomButton from "../components/JoinRoomButton";
+import JoinRoomButton from "../components/Joinroombutton";
 
 const HomePage = () => {
   const socket = io(import.meta.env.VITE_SOCKET_IO_URL);
